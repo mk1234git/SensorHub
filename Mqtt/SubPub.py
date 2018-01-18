@@ -2,7 +2,7 @@
 
 import mosquitto
     
-client = mosquitto.Mosquitto()
+client = mosquitto.Mosquitto("")
 client.connect("localhost", 1883, 60*60)
 
 def publish(topic, payload, qos=0, retain=True):

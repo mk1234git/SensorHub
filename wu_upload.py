@@ -50,13 +50,17 @@ if __name__ == "__main__":
     import mosquitto
     import time
         
-    client = mosquitto.Mosquitto()
+    client = mosquitto.Mosquitto("wu_upload")
     client.connect("localhost", 1883, 60)
         
     client.subscribe("sensor/2/msg", qos=0)
     client.on_message=on_message        #attach function to callback
-                        
-    client.loop_start()
+    
+    if True:
+        while True:
+            client.loop()
+    else:
+        client.loop_start()
         
-    while True:
-        time.sleep(1)
+        while True:
+            time.sleep(1)

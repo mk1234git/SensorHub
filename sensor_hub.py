@@ -7,8 +7,8 @@ import sys
 import json
 import Mqtt.SubPub as mqtt
 
-storeSqlite = True
-
+storeSqlite = False
+writeText = False
 
 nodeName = {
   "2": "out",
@@ -27,11 +27,13 @@ import time
 def now():
     return time.strftime("%Y-%m-%d %H:%M:%S")
 
-
-f = open("/var/www/html/temp/temp.txt", "a")
-f.write("start\n")
-f.flush()
-
+if writeText:
+    f = open("/var/www/html/temp/temp.txt", "a")
+    f.write("start\n")
+    f.flush()
+else:
+    f = None
+    
 from collections import namedtuple
 dataset = namedtuple('dataset', 'nodeid, rssi, type, cnt, vcc, temp, humi, pres, txLev')
 
@@ -59,8 +61,9 @@ while True:
     str = "%s, %d sec, (%d byte), %s" % (tStr, tNow - tLast, len(test.DATA), d)
     print(str)
 
-    f.write(str+"\n")
-    f.flush()
+    if f:
+        f.write(str+"\n")
+        f.flush()
     lastRx[d.nodeid] = tNow
     #print d
     #print 
