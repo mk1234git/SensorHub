@@ -16,6 +16,19 @@ class SerialData:
     
     def open(self, dev=defaultDev):
         self.serial = serial.Serial(dev)
+
+    def displayBegin(self):
+        self.text = []
+        
+    def displayText(self, x, y, text):
+        self.text.append("%c%c%s\x00" % (chr(x+48), chr(y+48), text))
+        
+    def displayEnd(self):
+        self.writeDisplay(''.join(self.text))
+        
+    def writeDisplay(self, text):
+        data = "\x02" + text + "\x03"
+        self.serial.write(data)
         
     def readData(self):
         data = self.serial.readline()
@@ -33,21 +46,28 @@ class SerialData:
             print(type(self.DATA), len(self.DATA))
         
     def decode(self, data):
-        tags = data.split(',')
-        for e in tags:
-            #print e
-            k,v = e.split(':')
-            k = k.strip()
-            v = v.strip()
+        try:
+            tags = data.split(',')
+            for e in tags:
+                #print e
+                k,v = e.split(':')
+                k = k.strip()
+                v = v.strip()
             
-            if k == 'id':
-                self.SENDERID = int(v)
-            elif k == 'rssi':
-                self.RSSI = int(v)
-            elif k == 'len':
-                self.DATALEN = int(v)
-            elif k == 'data':
-                self.DATA = binascii.unhexlify(v)
+                if k == 'id':
+                    self.SENDERID = int(v)
+                elif k == 'rssi':
+                    self.RSSI = int(v)
+                elif k == 'len':
+                    self.DATALEN = int(v)
+                elif k == 'data':
+                    self.DATA = binascii.unhexlify(v)
+        except:
+            print("decode error:", data)
+            self.DATA = ""
+            self.DATALEN = 0
+            self.RSSI = -999
+            self.SENDERID = -1
 
         
 if __name__ == "__main__":

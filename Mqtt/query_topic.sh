@@ -1,1 +1,1 @@
-mosquitto_sub  -h localhost -t sensor/#  -v
+mosquitto_sub  -h localhost -t sensor/#,display/#  -v
